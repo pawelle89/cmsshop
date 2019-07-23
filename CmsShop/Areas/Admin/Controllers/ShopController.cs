@@ -82,7 +82,7 @@ namespace CmsShop.Areas.Admin.Controllers
             return View();
         }
 
-        
+        [HttpGet]
         public ActionResult DeleteCategory(int id)
         {
             using (Db db=new Db())
@@ -98,5 +98,26 @@ namespace CmsShop.Areas.Admin.Controllers
             }
             return RedirectToAction("Categories");
         }
+
+        [HttpPost]
+        public string RenameCategory(string newCatName, int id)
+        {
+            using (Db db = new Db())
+            {
+                // sprawdzenie czy kategoria jest unikalna
+                if (db.Categories.Any(x => x.Name == newCatName))
+                    return "tytulzajety";
+
+                //pobieramy kategorie
+                CategoryDTO dto = db.Categories.Find(id);
+                //edycja kategorii
+                dto.Name = newCatName;
+                dto.Slug = newCatName.Replace(" ", "-").ToLower();
+                //zapis na bazie
+                db.SaveChanges();
+            }
+            return "Ok";
+        }
+
     }
 }
